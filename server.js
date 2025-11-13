@@ -1,4 +1,4 @@
-import express, { json } from 'express'
+import express from 'express'
 import cors from 'cors'
 const corsOptions = {
   origin: ['http://localhost:5173']
@@ -6,6 +6,7 @@ const corsOptions = {
 import userRoutes from './routes/users.routes.js'
 const app = express()
 
+app.disable("x-powered-by")
 app.use(cors(corsOptions))
 app.use(express.json())
 
