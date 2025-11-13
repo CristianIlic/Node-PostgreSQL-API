@@ -1,4 +1,5 @@
 import { pool } from "../db.js";
+import { validateUser } from "../schemas/users.schema.js";
 
 export const getUsers = async (req, res) => {
   const { rows } = await pool.query("SELECT * FROM users ORDER BY id ASC");
@@ -18,6 +19,11 @@ export const getUserById = async (req, res) => {
 
 export const createUser = async (req, res) => {
   try {
+    const result = validateUser(req.body)
+    if (result.error) {
+      return res.status(400).json({error: JSON.parse(result.error.message)})
+    }
+
     const { name, email } = req.body;
     const { rows } = await pool.query(
       "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *",
@@ -56,7 +62,5 @@ export const updateUser = async (req, res) => {
     "UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING *",
     [name, email, id]
   );
-  console.log(result);
-
   res.json({ message: "User edited" });
 };
